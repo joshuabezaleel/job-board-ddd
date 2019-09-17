@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -35,12 +36,14 @@ func (handler *userHandler) registerUser(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
+		log.Fatal(err)
 		return
 	}
 	defer r.Body.Close()
 
 	err = handler.service.RegisterUser(request.Username)
 	if err != nil {
+		log.Fatal(err)
 		return
 	}
 

@@ -13,21 +13,33 @@ import (
 	"github.com/joshuabezaleel/job-board/server"
 )
 
+const (
+	port         = ":8082"
+	connhost     = "localhost"
+	connport     = 8081
+	connusername = "postgres"
+	connpassword = "postgres"
+	dbname       = "test1"
+)
+
 func main() {
-	port := ":8080"
-	connusername := "postgres"
-	connpassword := "postgres"
-	dbname := "test-db-14-9"
-	connectionString := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", connusername, connpassword, dbname)
+	connectionString := fmt.Sprintf("host = %s port=%d user=%s password=%s dbname=%s sslmode=disable", connhost, connport, connusername, connpassword, dbname)
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
-	var userRepo user.Repository
+	// Setting up domain repositories
+	var (
+		userRepo user.Repository
+	)
 	userRepo = database.NewRepository(db)
 
-	var userService user.Service
+	// Setting up domain services
+	var (
+		userService user.Service
+	)
 	userService = user.NewService(userRepo)
 
 	srv := server.New(userService)
